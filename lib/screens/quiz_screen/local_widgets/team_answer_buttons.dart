@@ -4,10 +4,14 @@ import 'primary_button.dart';
 
 class TeamAnswerButtons extends StatelessWidget {
   final String teamName;
+  final Function trueHandler;
+  final Function falseHandler;
 
   const TeamAnswerButtons({
-    this.teamName,
-  });
+    Key key,
+    this.teamName, this.trueHandler, this.falseHandler,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -16,37 +20,24 @@ class TeamAnswerButtons extends StatelessWidget {
           teamName,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(
-          width: 8,
-        ),
+        const SizedBox(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PrimaryButton(
-              buttonColor: Colors.red.withOpacity(0.3),
-              borderButtonColor: Colors.red,
-              isHaveText: false,
-              icon: const Icon(
-                Icons.cancel_outlined,
-                size: 24,
-                color: Colors.red,
-              ),
+              color: Colors.red,
+              icon: Icons.cancel_outlined,
+              onPressed: falseHandler,
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 32),
             PrimaryButton(
-              buttonColor: Colors.green.withOpacity(0.3),
-              borderButtonColor: Colors.green,
-              isHaveText: false,
-              icon: const Icon(
-                Icons.check_circle_outline,
-                size: 24,
-                color: Colors.green,
-              ),
+              color: Colors.green,
+              icon: Icons.check_circle_outline,
+              onPressed: trueHandler,
             ),
           ],
         ),

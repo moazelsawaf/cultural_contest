@@ -1,45 +1,47 @@
 import 'package:flutter/material.dart';
 
 class PrimaryButton extends StatelessWidget {
-  final Color buttonColor;
-  final Color borderButtonColor;
-  final Icon icon;
-  final bool isHaveText;
-  final String textButton;
+  final Color color;
+  final IconData icon;
+  final String label;
+  final Function onPressed;
 
   const PrimaryButton({
-    this.buttonColor,
-    this.borderButtonColor,
+    Key key,
+    this.color,
     this.icon,
-    this.isHaveText = false,
-    this.textButton,
-  });
+    this.label,
+    this.onPressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: isHaveText ? 120 : 90,
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          backgroundColor: buttonColor,
-          onSurface: borderButtonColor,
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: color.withOpacity(0.2),
+        primary: color,
+        side: BorderSide(
+          width: 0.5,
+          color: color,
         ),
-        onPressed: () {},
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: isHaveText
-              ? Row(
-                  children: [
-                    icon,
-                    SizedBox(width: 4,),
-                    Text(
-                      textButton,
-                      style: TextStyle(color: borderButtonColor, fontSize: 18),
-                    )
-                  ],
-                )
-              : icon,
-        ),
+        minimumSize: const Size(150, 60),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 20,
+          ),
+          if (label != null) ...[
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ],
       ),
     );
   }

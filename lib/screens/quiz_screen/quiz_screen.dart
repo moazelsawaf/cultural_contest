@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:cultural_contest/providers/quiz_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-<<<<<<< HEAD
 import 'local_widgets/primary_button.dart';
 import 'local_widgets/team_answer_buttons.dart';
-=======
->>>>>>> ae65db365d12ca920aa4769d8453deeb43163b47l
+import 'local_widgets/team_info.dart';
 import 'local_widgets/time_progress.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -20,19 +20,25 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   Timer _timer;
-  int _currentTime = 0;
+  int _currentTime = 25;
+
+  bool _isInit = false;
 
   @override
-  void initState() {
-    super.initState();
-    _startTimer();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      _startTimer();
+      _isInit = true;
+    }
   }
 
   void _startTimer() {
+    final questionTime = context.read<QuizProvider>().questionTime;
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        if (_currentTime < 60) {
+        if (_currentTime < questionTime) {
           setState(() {
             _currentTime++;
           });
@@ -51,171 +57,117 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _quizProvider = context.watch<QuizProvider>();
     return Scaffold(
       body: Column(
         children: [
           TimeProgress(
-            totalTime: 60,
+            totalTime: _quizProvider.questionTime,
             currentTime: _currentTime,
             width: MediaQuery.of(context).size.width,
           ),
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Row(
-                  children: const [
-                    TeamInfo(
-                      teamName: 'فريق المضحكين',
-                      score: 10,
-                      winner: false,
-                    ),
-                    Spacer(),
-                    TeamInfo(
-                      teamName: 'ضحكني ضحكني',
-                      score: 20,
-                      winner: true,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'سؤال 1/10',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'هل لقاحات كوفيد-19 آمنة للأشخاص المصابين بفيروس العوز المناعي البشري؟',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-<<<<<<< HEAD
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      TeamAnswerButtons(
-                        teamName: 'فريق المحترفين',
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      TeamInfo(
+                        teamName: _quizProvider.firstTeamName,
+                        score: _quizProvider.firstTeamScore,
+                        winner: false,
                       ),
-                      TeamAnswerButtons(
-                        teamName: 'فريق الضحكاوية',
+                      const Spacer(),
+                      TeamInfo(
+                        teamName: _quizProvider.secondTeamName,
+                        score: _quizProvider.secondTeamScore,
+                        winner: true,
                       ),
                     ],
                   ),
-                ),
-
-                const Text(
-                  'الاجابة الصحيحه',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                  ),
-                ),
-                const Text(
-                  'نعم للضحك والضحكاوية',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                PrimaryButton(
-                  buttonColor: Colors.green.withOpacity(0.3),
-                  borderButtonColor: Colors.green,
-                  isHaveText: true,
-                  textButton: 'التالي',
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 24,
-                    color: Colors.green,
-                  ),
-                ),
-                // Spacer(),
-                Row(
-=======
-                // Spacer(),
-                Row( 
->>>>>>> ae65db365d12ca920aa4769d8453deeb43163b47
-                  children: [
-                    Image.asset(
-                      'assets/images/fiscs_su_logo.png',
-                      width: 150,
-                      height: 150,
+                  const Spacer(),
+                  Text(
+                    'سؤال ${_quizProvider.currentQuestion + 1}/${_quizProvider.questions.length}',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _quizProvider
+                        .questions[_quizProvider.currentQuestion].question,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  if (_currentTime == _quizProvider.questionTime) ...[
                     const Spacer(),
-                    Image.asset(
-                      'assets/images/fiscs_colleage_logo.png',
-                      width: 150,
-                      height: 150,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TeamAnswerButtons(
+                          teamName: _quizProvider.firstTeamName,
+                          trueHandler: () =>
+                              _quizProvider.updateScore(team: Team.firstTeam),
+                        ),
+                        const SizedBox(width: 100),
+                        TeamAnswerButtons(
+                          teamName: _quizProvider.secondTeamName,
+                          trueHandler: () =>
+                              _quizProvider.updateScore(team: Team.secondTeam),
+                        ),
+                      ],
                     ),
                   ],
-                )
-              ],
+                  if (false) ...[
+                    const Text(
+                      'الاجابة الصحيحه',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                      ),
+                    ),
+                    const Text(
+                      'نعم للضحك والضحكاوية',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    PrimaryButton(
+                      color: Colors.blue,
+                      label: 'السؤال التالي',
+                      icon: Icons.arrow_back,
+                      onPressed: () {},
+                    ),
+                  ],
+                  const Spacer(),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/fiscs_su_logo.png',
+                        width: 120,
+                        height: 120,
+                      ),
+                      const Spacer(),
+                      Image.asset(
+                        'assets/images/fiscs_colleage_logo.png',
+                        width: 120,
+                        height: 120,
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           )
         ],
       ),
-    );
-  }
-}
-
-class TeamInfo extends StatelessWidget {
-  final String teamName;
-  final int score;
-  final bool winner;
-
-  const TeamInfo({
-    Key key,
-    this.teamName,
-    this.score,
-    this.winner,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              teamName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (winner) ...[
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.sports_score_outlined,
-                color: Colors.amber,
-              ),
-            ],
-          ],
-        ),
-        Row(
-          children: [
-            Text(
-              score.toString(),
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(
-              Icons.confirmation_num_rounded,
-              color: Colors.amber,
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
