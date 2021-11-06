@@ -11,10 +11,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Material App',
       theme: ThemeData(
+        fontFamily: 'Cairo',
         backgroundColor: Colors.white,
       ),
       home: QuizScreen(),
     );
   }
 }
-
