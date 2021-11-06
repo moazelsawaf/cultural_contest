@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+<<<<<<< HEAD
 import 'local_widgets/primary_button.dart';
 import 'local_widgets/team_answer_buttons.dart';
+=======
+>>>>>>> ae65db365d12ca920aa4769d8453deeb43163b47l
 import 'local_widgets/time_progress.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -92,6 +95,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
+<<<<<<< HEAD
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -134,6 +138,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 // Spacer(),
                 Row(
+=======
+                // Spacer(),
+                Row( 
+>>>>>>> ae65db365d12ca920aa4769d8453deeb43163b47
                   children: [
                     Image.asset(
                       'assets/images/fiscs_su_logo.png',
