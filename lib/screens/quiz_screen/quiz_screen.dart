@@ -20,33 +20,17 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   Timer _timer;
-  int _currentTime = 25;
-
   bool _isInit = false;
+  QuizProvider _quizProvider;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInit) {
-      _startTimer();
+      _quizProvider = context.watch<QuizProvider>();
+      _quizProvider.startTimer();
       _isInit = true;
     }
-  }
-
-  void _startTimer() {
-    final questionTime = context.read<QuizProvider>().questionTime;
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        if (_currentTime < questionTime) {
-          setState(() {
-            _currentTime++;
-          });
-        } else {
-          _timer.cancel();
-        }
-      },
-    );
   }
 
   @override
@@ -57,13 +41,12 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _quizProvider = context.watch<QuizProvider>();
     return Scaffold(
       body: Column(
         children: [
           TimeProgress(
             totalTime: _quizProvider.questionTime,
-            currentTime: _currentTime,
+            currentTime: _quizProvider.currentTime,
             width: MediaQuery.of(context).size.width,
           ),
           Expanded(
@@ -74,15 +57,17 @@ class _QuizScreenState extends State<QuizScreen> {
                   Row(
                     children: [
                       TeamInfo(
-                        teamName: _quizProvider.firstTeamName,
-                        score: _quizProvider.firstTeamScore,
-                        winner: false,
+                        teamName: _quizProvider.secondTeamName,
+                        score: _quizProvider.secondTeamScore,
+                        winner: _quizProvider.secondTeamScore >
+                            _quizProvider.firstTeamScore,
                       ),
                       const Spacer(),
                       TeamInfo(
-                        teamName: _quizProvider.secondTeamName,
-                        score: _quizProvider.secondTeamScore,
-                        winner: true,
+                        teamName: _quizProvider.firstTeamName,
+                        score: _quizProvider.firstTeamScore,
+                        winner: _quizProvider.firstTeamScore >
+                            _quizProvider.secondTeamScore,
                       ),
                     ],
                   ),
@@ -104,46 +89,71 @@ class _QuizScreenState extends State<QuizScreen> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  if (_currentTime == _quizProvider.questionTime) ...[
+                  if (_quizProvider.currentTime == _quizProvider.questionTime &&
+                      !_quizProvider.showAnswer) ...[
                     const Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TeamAnswerButtons(
-                          teamName: _quizProvider.firstTeamName,
-                          trueHandler: () =>
-                              _quizProvider.updateScore(team: Team.firstTeam),
+                          teamName: _quizProvider.secondTeamName,
+                          trueHandler: _quizProvider.firstTeamAnswered
+                              ? () => _quizProvider.getAnswer(
+                                  team: Team.secondTeam, correct: true)
+                              : null,
+                          falseHandler: _quizProvider.firstTeamAnswered
+                              ? () => _quizProvider.getAnswer(
+                                  team: Team.secondTeam, correct: false)
+                              : null,
                         ),
                         const SizedBox(width: 100),
                         TeamAnswerButtons(
-                          teamName: _quizProvider.secondTeamName,
-                          trueHandler: () =>
-                              _quizProvider.updateScore(team: Team.secondTeam),
+                          teamName: _quizProvider.firstTeamName,
+                          trueHandler: _quizProvider.firstTeamAnswered
+                              ? null
+                              : () => _quizProvider.getAnswer(
+                                  team: Team.firstTeam, correct: true),
+                          falseHandler: _quizProvider.firstTeamAnswered
+                              ? null
+                              : () => _quizProvider.getAnswer(
+                                  team: Team.firstTeam, correct: false),
                         ),
                       ],
                     ),
                   ],
-                  if (false) ...[
+                  if (_quizProvider.showAnswer) ...[
+                    const Spacer(),
                     const Text(
-                      'الاجابة الصحيحه',
+                      ':الاجابة الصحيحة',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 28,
                       ),
                     ),
-                    const Text(
-                      'نعم للضحك والضحكاوية',
+                    const SizedBox(height: 16),
+                    Text(
+                      _quizProvider
+                          .questions[_quizProvider.currentQuestion].answer,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    PrimaryButton(
-                      color: Colors.blue,
-                      label: 'السؤال التالي',
-                      icon: Icons.arrow_back,
-                      onPressed: () {},
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        PrimaryButton(
+                          color: Colors.blue,
+                          label: _quizProvider.currentQuestion ==
+                                  _quizProvider.questions.length - 1
+                              ? 'إظهار النتيجة'
+                              : 'السؤال التالي',
+                          icon: Icons.arrow_back,
+                          onPressed: _quizProvider.nextQuestion,
+                        ),
+                      ],
                     ),
                   ],
                   const Spacer(),

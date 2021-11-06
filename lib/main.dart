@@ -1,14 +1,18 @@
 import 'package:cultural_contest/providers/quiz_provider.dart';
 import 'package:cultural_contest/screens/quiz_screen/quiz_screen.dart';
+import 'package:cultural_contest/screens/quiz_wrapper.dart';
+import 'package:cultural_contest/screens/result_screen/result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_)=>QuizProvider()),
-      ],
-      child: const MyApp(),
-    ),);
+void main() => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => QuizProvider()),
+        ],
+        child: const MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
@@ -21,7 +25,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Cairo',
         backgroundColor: Colors.white,
       ),
-      home: QuizScreen(),
+      home: const QuizWrapper(),
     );
   }
 }
