@@ -16,11 +16,11 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.2),
+      style: ElevatedButton.styleFrom(
         primary: color,
+        onPrimary: Colors.white,
         side: BorderSide(
           width: 0.5,
           color: color,

@@ -24,6 +24,7 @@ class TextInput extends StatelessWidget {
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
+          borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(5),
         ),
       ),

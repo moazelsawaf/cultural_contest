@@ -19,6 +19,7 @@ class Credits extends StatelessWidget {
           'تحت إشراف رائد شباب الكلية: الدكتور أحمد عماد الدين\nعميد الكلية: أستاذ دكتور موسى ابراهيم موسى',
           textAlign: TextAlign.center,
           style: TextStyle(
+            color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
