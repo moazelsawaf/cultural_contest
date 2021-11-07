@@ -8,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
 
   const PrimaryButton({
     Key key,
-    this.color,
+    this.color = Colors.blue,
     this.icon,
     this.label,
     this.onPressed,
@@ -30,17 +30,18 @@ class PrimaryButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 20,
-          ),
-          if (label != null) ...[
-            const SizedBox(width: 12),
+          if (icon != null) ...[
+            Icon(
+              icon,
+              size: 20,
+            ),
+          ],
+          const SizedBox(width: 12),
+          if (label != null)
             Text(
               label,
               style: const TextStyle(fontSize: 16),
             ),
-          ],
         ],
       ),
     );

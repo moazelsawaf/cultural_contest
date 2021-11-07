@@ -1,8 +1,7 @@
 import 'package:cultural_contest/providers/quiz_provider.dart';
-import 'package:cultural_contest/screens/quiz_screen/quiz_screen.dart';
-import 'package:cultural_contest/screens/quiz_wrapper.dart';
-import 'package:cultural_contest/screens/result_screen/result_screen.dart';
+import 'package:cultural_contest/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(
@@ -20,12 +19,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      supportedLocales: const [
+        Locale('ar'),
+        Locale('en'),
+      ],
+      localizationsDelegates: const [
+        FormBuilderLocalizations.delegate,
+      ],
       title: 'Material App',
       theme: ThemeData(
         fontFamily: 'Cairo',
         backgroundColor: Colors.white,
       ),
-      home: const QuizWrapper(),
+      home: const SplashScreen(),
     );
   }
 }

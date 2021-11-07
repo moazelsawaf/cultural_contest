@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:cultural_contest/providers/quiz_provider.dart';
+import 'package:cultural_contest/screens/result_screen/result_screen.dart';
+import 'package:cultural_contest/widgets/credits.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +41,17 @@ class _QuizScreenState extends State<QuizScreen> {
     _timer.cancel();
   }
 
+  void _nextQuestion() {
+    if (_quizProvider.currentQuestion <
+        _quizProvider.filteredQuestions.length - 1) {
+      _quizProvider.nextQuestion();
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+        return const ResultScreen();
+      }));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +86,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                   const Spacer(),
                   Text(
-                    'سؤال ${_quizProvider.currentQuestion + 1}/${_quizProvider.questions.length}',
+                    'سؤال ${_quizProvider.currentQuestion + 1}/${_quizProvider.filteredQuestions.length}',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -82,7 +95,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _quizProvider
-                        .questions[_quizProvider.currentQuestion].question,
+                        .filteredQuestions[_quizProvider.currentQuestion]
+                        .question,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 32,
@@ -133,7 +147,8 @@ class _QuizScreenState extends State<QuizScreen> {
                     const SizedBox(height: 16),
                     Text(
                       _quizProvider
-                          .questions[_quizProvider.currentQuestion].answer,
+                          .filteredQuestions[_quizProvider.currentQuestion]
+                          .answer,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 24,
@@ -147,31 +162,17 @@ class _QuizScreenState extends State<QuizScreen> {
                         PrimaryButton(
                           color: Colors.blue,
                           label: _quizProvider.currentQuestion ==
-                                  _quizProvider.questions.length - 1
+                                  _quizProvider.filteredQuestions.length - 1
                               ? 'إظهار النتيجة'
                               : 'السؤال التالي',
                           icon: Icons.arrow_back,
-                          onPressed: _quizProvider.nextQuestion,
+                          onPressed: _nextQuestion,
                         ),
                       ],
                     ),
                   ],
                   const Spacer(),
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/fiscs_su_logo.png',
-                        width: 120,
-                        height: 120,
-                      ),
-                      const Spacer(),
-                      Image.asset(
-                        'assets/images/fiscs_colleage_logo.png',
-                        width: 120,
-                        height: 120,
-                      ),
-                    ],
-                  )
+                   const Credits()
                 ],
               ),
             ),

@@ -1,5 +1,8 @@
 import 'package:cultural_contest/providers/quiz_provider.dart';
+import 'package:cultural_contest/screens/quiz_screen/local_widgets/primary_button.dart';
 import 'package:cultural_contest/screens/quiz_screen/local_widgets/team_info.dart';
+import 'package:cultural_contest/screens/quiz_setup_screen/quiz_setup_screen.dart';
+import 'package:cultural_contest/widgets/credits.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,22 +56,28 @@ class ResultScreen extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 32),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/fiscs_su_logo.png',
-                        width: 120,
-                        height: 120,
-                      ),
-                      const Spacer(),
-                      Image.asset(
-                        'assets/images/fiscs_colleage_logo.png',
-                        width: 120,
-                        height: 120,
+                      PrimaryButton(
+                        color: Colors.blue,
+                        label: 'القائمة الرئيسية',
+                        onPressed: () {
+                          _quizProvider.resetQuiz();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) {
+                                return QuizSetupScreen();
+                              },
+                            ),
+                          );
+                        },
                       ),
                     ],
-                  )
+                  ),
+                  const Spacer(),
+                  const Credits()
                 ],
               ),
             ),
