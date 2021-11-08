@@ -1,6 +1,8 @@
+import 'package:cultural_contest/models/category.dart';
+
 class Question {
   final int id;
-  final String category;
+  final Category category;
   final String question;
   final String answer;
 

@@ -9,7 +9,9 @@ class TeamAnswerButtons extends StatelessWidget {
 
   const TeamAnswerButtons({
     Key key,
-    this.teamName, this.trueHandler, this.falseHandler,
+    this.teamName,
+    this.trueHandler,
+    this.falseHandler,
   }) : super(key: key);
 
   @override
@@ -29,15 +31,15 @@ class TeamAnswerButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PrimaryButton(
-              color: Colors.red,
-              icon: Icons.cancel_outlined,
-              onPressed: falseHandler,
-            ),
-            const SizedBox(width: 32),
-            PrimaryButton(
               color: Colors.green,
               icon: Icons.check_circle_outline,
               onPressed: trueHandler,
+            ),
+            const SizedBox(width: 32),
+            PrimaryButton(
+              color: Colors.red,
+              icon: Icons.cancel_outlined,
+              onPressed: falseHandler,
             ),
           ],
         ),

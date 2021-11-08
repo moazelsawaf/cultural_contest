@@ -18,13 +18,6 @@ class TeamInfo extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              teamName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             if (winner) ...[
               const SizedBox(width: 8),
               const Icon(
@@ -32,21 +25,28 @@ class TeamInfo extends StatelessWidget {
                 color: Colors.amber,
               ),
             ],
+            Text(
+              teamName,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         Row(
           children: [
+            const Icon(
+              Icons.confirmation_num_rounded,
+              color: Colors.amber,
+            ),
+            const SizedBox(width: 8),
             Text(
               score.toString(),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(
-              Icons.confirmation_num_rounded,
-              color: Colors.amber,
             ),
           ],
         ),

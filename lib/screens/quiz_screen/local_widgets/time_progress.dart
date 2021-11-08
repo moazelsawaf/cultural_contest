@@ -57,7 +57,10 @@ class TimeProgress extends StatelessWidget {
                       style: TextStyle(fontSize: 12),
                     ),
                 ],
-                style: const TextStyle(
+                style: TextStyle(
+                  color: currentTime / totalTime >= 0.75
+                      ? Colors.white
+                      : Colors.black,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

@@ -1,6 +1,7 @@
 import 'package:cultural_contest/providers/quiz_provider.dart';
 import 'package:cultural_contest/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
@@ -19,14 +20,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      supportedLocales: const [
-        Locale('ar'),
-        Locale('en'),
-      ],
+      supportedLocales: const [Locale('ar')],
       localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
         FormBuilderLocalizations.delegate,
       ],
-      title: 'Material App',
+      title: 'The Cultural Contest',
       theme: ThemeData(
         fontFamily: 'Cairo',
         backgroundColor: Colors.white,

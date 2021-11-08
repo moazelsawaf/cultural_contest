@@ -39,11 +39,16 @@ class ResultScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   const Text(
-                    ':الفائز هو',
+                    'الفائز هو:',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  Image.asset(
+                    'assets/images/cup.png',
+                    height: 300,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -63,6 +68,7 @@ class ResultScreen extends StatelessWidget {
                       PrimaryButton(
                         color: Colors.blue,
                         label: 'القائمة الرئيسية',
+                        icon: Icons.keyboard_arrow_left_sharp,
                         onPressed: () {
                           _quizProvider.resetQuiz();
                           Navigator.of(context).push(

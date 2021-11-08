@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:cultural_contest/models/question_model.dart';
+import 'package:cultural_contest/models/category.dart';
+import 'package:cultural_contest/models/question.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
@@ -14,7 +15,44 @@ class QuizProvider with ChangeNotifier {
   final List<Question> _filteredQuestions = [];
   List<Question> get filteredQuestions => [..._filteredQuestions];
 
+  final List<Category> categories = [
+    Category(
+      name: 'العلمية',
+      color: Colors.blue,
+      questionsCount: 0,
+    ),
+    Category(
+      name: 'العامة',
+      color: Colors.orange,
+      questionsCount: 0,
+    ),
+    Category(
+      name: 'الرياضية',
+      color: Colors.green,
+      questionsCount: 0,
+    ),
+    Category(
+      name: 'الفنية',
+      color: Colors.red,
+      questionsCount: 0,
+    ),
+    Category(
+      name: 'التاريخية',
+      color: Colors.brown,
+      questionsCount: 0,
+    ),
+    Category(
+      name: 'الإضافية',
+      color: Colors.deepOrange,
+      questionsCount: 0,
+    ),
+  ];
+
   int currentQuestion = 0;
+
+  int get currentCategoryQuestion =>
+      (currentQuestion % _categoryQuestionsCount) + 1;
+
   int currentTime = 0;
 
   int questionTime;
@@ -29,7 +67,9 @@ class QuizProvider with ChangeNotifier {
   bool firstTeamAnswered = false;
   bool secondTeamAnswered = false;
 
-  bool get showAnswer => firstTeamAnswered && secondTeamAnswered;
+  int get _categoryQuestionsCount => quizQuestions ~/ 5;
+
+  bool get showNextQuestion => firstTeamAnswered && secondTeamAnswered;
 
   Timer _timer;
 
@@ -44,6 +84,11 @@ class QuizProvider with ChangeNotifier {
         secondTeamScore += questionScore;
       }
       secondTeamAnswered = true;
+
+      if (currentQuestion == _filteredQuestions.length - 1 &&
+          firstTeamScore == secondTeamScore) {
+        _filteredQuestions.add(_getAdditionalQuestion());
+      }
     }
 
     notifyListeners();
@@ -56,6 +101,16 @@ class QuizProvider with ChangeNotifier {
     currentTime = 0;
     startTimer();
     notifyListeners();
+  }
+
+  Question _getAdditionalQuestion() {
+    final question =
+        _questions.firstWhere((q) => q.category.name == 'الإضافية');
+    _questions.removeWhere((q) => q.id == question.id);
+    categories
+        .firstWhere((category) => category.name == 'الإضافية')
+        .questionsCount++;
+    return question;
   }
 
   void startTimer() {
@@ -86,7 +141,8 @@ class QuizProvider with ChangeNotifier {
 
           final question = Question(
             id: row[0],
-            category: row[1].toString(),
+            category: categories
+                .firstWhere((category) => category.name == row[1].toString()),
             question: row[2].toString(),
             answer: row[3].toString(),
           );
@@ -95,27 +151,27 @@ class QuizProvider with ChangeNotifier {
         }
       }
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
   void filterQuestions() {
-    _questions.shuffle();
+    // _questions.shuffle();
 
-    print('testtest: ${_questions.length}');
+    for (Category category in categories) {
+      if (category.name == 'الإضافية') {
+        return;
+      }
 
-    final categories = [
-      'العلمي',
-      'المعلومات العامة',
-      'الرياضيه',
-      'الفنيه',
-      'التاريخيه'
-    ];
-
-    for (String category in categories) {
       var temporaryQuestion = _questions
-          .where((question) => question.category == category)
-          .take(quizQuestions ~/ 5)
+          .where((question) {
+            if (question.category == category) {
+              question.category.questionsCount = _categoryQuestionsCount;
+              return true;
+            }
+            return false;
+          })
+          .take(_categoryQuestionsCount)
           .toList();
 
       _filteredQuestions.addAll(temporaryQuestion);
@@ -125,7 +181,7 @@ class QuizProvider with ChangeNotifier {
       }
     }
 
-    _filteredQuestions.shuffle();
+    // _filteredQuestions.shuffle();
   }
 
   void resetQuiz() {
@@ -136,5 +192,8 @@ class QuizProvider with ChangeNotifier {
     firstTeamAnswered = false;
     secondTeamAnswered = false;
     _filteredQuestions.clear();
+    for (var category in categories) {
+      category.questionsCount = 0;
+    }
   }
 }

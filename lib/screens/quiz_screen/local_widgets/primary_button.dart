@@ -19,28 +19,25 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
+        elevation: 0,
         primary: color,
         onPrimary: Colors.white,
-        side: BorderSide(
-          width: 0.5,
-          color: color,
-        ),
         minimumSize: const Size(150, 60),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (icon != null) ...[
-            Icon(
-              icon,
-              size: 20,
-            ),
-          ],
-          const SizedBox(width: 12),
-          if (label != null)
+          if (label != null) ...[
             Text(
               label,
               style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(width: 12),
+          ],
+          if (icon != null)
+            Icon(
+              icon,
+              size: 20,
             ),
         ],
       ),

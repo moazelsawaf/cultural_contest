@@ -31,6 +31,7 @@ class _QuizScreenState extends State<QuizScreen> {
     if (!_isInit) {
       _quizProvider = context.watch<QuizProvider>();
       _quizProvider.startTimer();
+
       _isInit = true;
     }
   }
@@ -44,6 +45,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void _nextQuestion() {
     if (_quizProvider.currentQuestion <
         _quizProvider.filteredQuestions.length - 1) {
+      _toggleShowAnswer();
       _quizProvider.nextQuestion();
     } else {
       Navigator.of(context).push(MaterialPageRoute(builder: (_) {
@@ -51,6 +53,9 @@ class _QuizScreenState extends State<QuizScreen> {
       }));
     }
   }
+
+  bool _showAnswer = false;
+  void _toggleShowAnswer() => setState(() => _showAnswer = !_showAnswer);
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +75,17 @@ class _QuizScreenState extends State<QuizScreen> {
                   Row(
                     children: [
                       TeamInfo(
-                        teamName: _quizProvider.secondTeamName,
-                        score: _quizProvider.secondTeamScore,
-                        winner: _quizProvider.secondTeamScore >
-                            _quizProvider.firstTeamScore,
-                      ),
-                      const Spacer(),
-                      TeamInfo(
                         teamName: _quizProvider.firstTeamName,
                         score: _quizProvider.firstTeamScore,
                         winner: _quizProvider.firstTeamScore >
                             _quizProvider.secondTeamScore,
+                      ),
+                      const Spacer(),
+                      TeamInfo(
+                        teamName: _quizProvider.secondTeamName,
+                        score: _quizProvider.secondTeamScore,
+                        winner: _quizProvider.secondTeamScore >
+                            _quizProvider.firstTeamScore,
                       ),
                     ],
                   ),
@@ -89,6 +94,18 @@ class _QuizScreenState extends State<QuizScreen> {
                     'سؤال ${_quizProvider.currentQuestion + 1}/${_quizProvider.filteredQuestions.length}',
                     style: const TextStyle(
                       fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'الأسئلة ${_quizProvider.filteredQuestions[_quizProvider.currentQuestion].category.name} (${_quizProvider.filteredQuestions[_quizProvider.currentQuestion].category.name == 'الإضافية' ? _quizProvider.filteredQuestions[_quizProvider.currentQuestion].category.questionsCount : _quizProvider.currentCategoryQuestion}/${_quizProvider.filteredQuestions[_quizProvider.currentQuestion].category.questionsCount})',
+                    style: TextStyle(
+                      color: _quizProvider
+                          .filteredQuestions[_quizProvider.currentQuestion]
+                          .category
+                          .color,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -103,76 +120,90 @@ class _QuizScreenState extends State<QuizScreen> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  if (_quizProvider.currentTime == _quizProvider.questionTime &&
-                      !_quizProvider.showAnswer) ...[
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TeamAnswerButtons(
-                          teamName: _quizProvider.secondTeamName,
-                          trueHandler: _quizProvider.firstTeamAnswered
-                              ? () => _quizProvider.getAnswer(
-                                  team: Team.secondTeam, correct: true)
-                              : null,
-                          falseHandler: _quizProvider.firstTeamAnswered
-                              ? () => _quizProvider.getAnswer(
-                                  team: Team.secondTeam, correct: false)
-                              : null,
-                        ),
-                        const SizedBox(width: 100),
-                        TeamAnswerButtons(
-                          teamName: _quizProvider.firstTeamName,
-                          trueHandler: _quizProvider.firstTeamAnswered
-                              ? null
-                              : () => _quizProvider.getAnswer(
-                                  team: Team.firstTeam, correct: true),
-                          falseHandler: _quizProvider.firstTeamAnswered
-                              ? null
-                              : () => _quizProvider.getAnswer(
-                                  team: Team.firstTeam, correct: false),
-                        ),
-                      ],
-                    ),
-                  ],
-                  if (_quizProvider.showAnswer) ...[
-                    const Spacer(),
-                    const Text(
-                      ':الاجابة الصحيحة',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
+                  const Spacer(),
+                  if (_quizProvider.currentTime ==
+                      _quizProvider.questionTime) ...[
+                    if (!_showAnswer) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          PrimaryButton(
+                            color: Colors.blue,
+                            label: 'إظهار الإجابة',
+                            onPressed: _toggleShowAnswer,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _quizProvider
-                          .filteredQuestions[_quizProvider.currentQuestion]
-                          .answer,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        PrimaryButton(
-                          color: Colors.blue,
-                          label: _quizProvider.currentQuestion ==
-                                  _quizProvider.filteredQuestions.length - 1
-                              ? 'إظهار النتيجة'
-                              : 'السؤال التالي',
-                          icon: Icons.arrow_back,
-                          onPressed: _nextQuestion,
+                      const Spacer(),
+                    ],
+                    if (_showAnswer) ...[
+                      const Text(
+                        'الاجابة الصحيحة:',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _quizProvider
+                            .filteredQuestions[_quizProvider.currentQuestion]
+                            .answer,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      if (_quizProvider.showNextQuestion)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PrimaryButton(
+                              color: Colors.blue,
+                              label: _quizProvider.currentQuestion ==
+                                      _quizProvider.filteredQuestions.length - 1
+                                  ? 'إظهار النتيجة'
+                                  : 'السؤال التالي',
+                              icon: Icons.keyboard_arrow_left_sharp,
+                              onPressed: _nextQuestion,
+                            ),
+                          ],
+                        ),
+                      if (!_quizProvider.showNextQuestion)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TeamAnswerButtons(
+                              teamName: _quizProvider.firstTeamName,
+                              trueHandler: _quizProvider.firstTeamAnswered
+                                  ? null
+                                  : () => _quizProvider.getAnswer(
+                                      team: Team.firstTeam, correct: true),
+                              falseHandler: _quizProvider.firstTeamAnswered
+                                  ? null
+                                  : () => _quizProvider.getAnswer(
+                                      team: Team.firstTeam, correct: false),
+                            ),
+                            const SizedBox(width: 100),
+                            TeamAnswerButtons(
+                              teamName: _quizProvider.secondTeamName,
+                              trueHandler: _quizProvider.firstTeamAnswered
+                                  ? () => _quizProvider.getAnswer(
+                                      team: Team.secondTeam, correct: true)
+                                  : null,
+                              falseHandler: _quizProvider.firstTeamAnswered
+                                  ? () => _quizProvider.getAnswer(
+                                      team: Team.secondTeam, correct: false)
+                                  : null,
+                            ),
+                          ],
+                        ),
+                    ],
                   ],
                   const Spacer(),
-                   const Credits()
+                  const Credits(),
                 ],
               ),
             ),
