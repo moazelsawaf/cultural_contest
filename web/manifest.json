@@ -1,11 +1,11 @@
 {
-    "name": "cultural_contest",
-    "short_name": "cultural_contest",
+    "name": "The Cultural Contest",
+    "short_name": "The Cultural Contest",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "The Cultural Contest",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

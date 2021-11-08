@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cultural_contest/models/category.dart';
 import 'package:cultural_contest/models/question.dart';
-import 'package:excel/excel.dart';
+import 'package:cultural_contest/questions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show ByteData, rootBundle;
 
 enum Team { firstTeam, secondTeam }
 
@@ -128,30 +128,18 @@ class QuizProvider with ChangeNotifier {
   }
 
   Future<void> loadQuestions() async {
-    try {
-      ByteData data = await rootBundle.load("xlsx/questions.xlsx");
-      var bytes =
-          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-      var excel = Excel.decodeBytes(bytes);
+    final decodedQuestions = json.decode(questionsAsJson) as List<dynamic>;
 
-      for (int i = 0; i < excel.tables.keys.length; i++) {
-        final table = excel.tables.keys.elementAt(i);
-        for (int j = 1; j < excel.tables[table].rows.length; j++) {
-          final row = excel.tables[table].rows[j];
+    for (var fetchedQuestion in decodedQuestions) {
+      final question = Question(
+        id: fetchedQuestion['id'],
+        category: categories.firstWhere((category) =>
+            category.name == fetchedQuestion['category'].toString()),
+        question: fetchedQuestion['question'].toString(),
+        answer: fetchedQuestion['answer'].toString(),
+      );
 
-          final question = Question(
-            id: row[0],
-            category: categories
-                .firstWhere((category) => category.name == row[1].toString()),
-            question: row[2].toString(),
-            answer: row[3].toString(),
-          );
-
-          _questions.add(question);
-        }
-      }
-    } catch (e) {
-      // print(e);
+      _questions.add(question);
     }
   }
 
