@@ -21,7 +21,7 @@ class _BackgroundState extends State<Background> {
       const Duration(seconds: 5),
       (_) {
         setState(() {
-          if (_currentImage == 4) {
+          if (_currentImage == 2) {
             _currentImage = 1;
           } else {
             _currentImage++;
